@@ -13,9 +13,9 @@ export const JournalLayout = ({ children }) => {
   return (
     <Box sx={{ display: 'flex', flexShrink: { sm: 0 } }}>
 
-      <NavBar drawerWidth={drawerWidth} setDisplayDrawer={setDisplayDrawer} />
+      <NavBar drawerWidth={drawerWidth}/>
 
-      <SideBar drawerWidth={drawerWidth} displayDrawer={displayDrawer} setDisplayDrawer={setDisplayDrawer} />
+      <SideBar drawerWidth={drawerWidth} />
 
       <Box
         pl={drawerWidth}
