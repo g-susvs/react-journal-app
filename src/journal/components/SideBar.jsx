@@ -2,10 +2,12 @@ import { Box, Divider, Drawer, Grid, IconButton, List, ListItem, ListItemButton,
 import { TurnedInNot, CloseOutlined } from '@mui/icons-material';
 import { useDispatch, useSelector } from 'react-redux';
 import { setDisplayDrawer } from '../../store/drawer/drawerSlice';
+import { SidebarListItem } from './SidebarListItem';
 
 export const SideBar = ({ drawerWidth = 240 }) => {
 
     const { displayName } = useSelector(state => state.auth)
+    const { notes } = useSelector(state => state.journal)
     const dispatch = useDispatch()
     const { displayDrawer } = useSelector(state => state.drawer)
     return (
@@ -39,18 +41,8 @@ export const SideBar = ({ drawerWidth = 240 }) => {
 
                 <List>
                     {
-                        ['Enero', 'Febrero', 'Marzo', 'Abril'].map(text => (
-                            <ListItem key={text} disablePadding>
-                                <ListItemButton>
-                                    <ListItemIcon>
-                                        <TurnedInNot />
-                                    </ListItemIcon>
-                                    <Grid container>
-                                        <ListItemText primary={text} />
-                                        <ListItemText secondary={'Exercitation cillum irure elit consectetur.'} />
-                                    </Grid>
-                                </ListItemButton>
-                            </ListItem>
+                        notes.map(note => (
+                            <SidebarListItem key={note.id} {...note} />
                         ))
                     }
                 </List>

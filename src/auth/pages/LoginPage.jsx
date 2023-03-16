@@ -4,16 +4,16 @@ import { Alert, Button, Grid, Link, TextField, Typography } from '@mui/material'
 import { Google } from '@mui/icons-material';
 import { AuthLayout } from '../layout/AuthLayout';
 import { useForm } from '../../hooks/useForm';
-import { checkingAuthentication, startGoogleSignIn, startLoginWithEmailPassword } from '../../store/auth';
+import { startGoogleSignIn, startLoginWithEmailPassword } from '../../store/auth';
 import { useEffect, useMemo } from 'react';
 
-
+const formData = { email: '', password: '' }
 export const LoginPage = () => {
 
   const navigate = useNavigate()
   const { status, errorMessage } = useSelector(state => state.auth)
   const dispatch = useDispatch()
-  const { email, password, onInputChange } = useForm({ email: '', password: '' })
+  const { email, password, onInputChange } = useForm(formData)
 
   const isAuthenticated = useMemo(() => status === 'checking', [status])
 
