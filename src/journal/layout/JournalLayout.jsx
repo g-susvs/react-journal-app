@@ -1,32 +1,21 @@
 import { Toolbar } from '@mui/material';
-import { Box } from '@mui/system'
-import { useState } from 'react';
+import { Box } from '@mui/system';
 import { NavBar, SideBar } from '../components';
-
 
 const drawerWidth = 280;
 
 export const JournalLayout = ({ children }) => {
+	return (
+		<Box sx={{ display: 'flex', flexShrink: { sm: 0 } }}>
+			<NavBar drawerWidth={drawerWidth} />
 
-  const [displayDrawer, setDisplayDrawer] = useState('none') // block/none
+			<SideBar drawerWidth={drawerWidth} />
 
-  return (
-    <Box sx={{ display: 'flex', flexShrink: { sm: 0 } }}>
+			<Box pl={drawerWidth} component='main' sx={{ flexGrow: 1, p: 3 }}>
+				<Toolbar />
 
-      <NavBar drawerWidth={drawerWidth}/>
-
-      <SideBar drawerWidth={drawerWidth} />
-
-      <Box
-        pl={drawerWidth}
-        component='main'
-        sx={{ flexGrow: 1, p: 3 }}
-      >
-        <Toolbar />
-
-        {children}
-
-      </Box>
-    </Box>
-  )
-}
+				{children}
+			</Box>
+		</Box>
+	);
+};

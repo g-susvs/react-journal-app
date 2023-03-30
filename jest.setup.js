@@ -3,10 +3,9 @@ import 'whatwg-fetch'; // <-- yarn add whatwg-fetch
 // import { getEnvironments } from './src/helpers/getEnvironments';
 
 require('dotenv').config({
-    path:'.env.test'
-})
-
+	path: '.env.test',
+});
 
 jest.mock('./src/helpers/getEnvironments', () => ({
-    getEnvironments: () => ({...process.env})
-}))
+	getEnvironments: () => ({ ...process.env }),
+}));

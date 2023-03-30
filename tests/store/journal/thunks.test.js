@@ -1,47 +1,52 @@
-import { collection, deleteDoc, getDocs } from "firebase/firestore/lite"
-import { FirebaseDB } from "../../../src/firebase/config"
-import { addNewEmtyNote, savingNote, setActiveNote, setNotes, startLoadingNotes, startNewNote } from "../../../src/store/journal"
+import { collection, deleteDoc, getDocs } from 'firebase/firestore/lite';
+import { FirebaseDB } from '../../../src/firebase/config';
+import {
+	addNewEmtyNote,
+	savingNote,
+	setActiveNote,
+	startNewNote,
+} from '../../../src/store/journal';
 
 describe('Pruebas en journal thunks', () => {
+	const dispatch = jest.fn();
+	const getState = jest.fn();
 
-    const dispatch = jest.fn()
-    const getState = jest.fn()
+	beforeEach(() => jest.clearAllMocks());
 
-    beforeEach(() => jest.clearAllMocks())
+	test('startNewNote debe de crear una nueva nota en blanca', async () => {
+		const uid = 'TEST-UID';
+		getState.mockReturnValue({ auth: { uid } });
 
-    test('startNewNote debe de crear una nueva nota en blanca', async () => {
+		await startNewNote()(dispatch, getState);
 
-        const uid = 'TEST-UID'
-        getState.mockReturnValue({ auth: { uid: uid } })
+		expect(dispatch).toHaveBeenCalledWith(savingNote());
+		expect(dispatch).toHaveBeenCalledWith(
+			addNewEmtyNote({
+				body: '',
+				date: expect.any(Number),
+				id: expect.any(String),
+				imgsURL: [],
+				title: '',
+			})
+		);
+		expect(dispatch).toHaveBeenCalledWith(
+			setActiveNote({
+				body: '',
+				date: expect.any(Number),
+				id: expect.any(String),
+				imgsURL: [],
+				title: '',
+			})
+		);
 
-        await startNewNote()(dispatch, getState)
+		// Borrar de firebase
+		const collectionRef = collection(FirebaseDB, `${uid}/journal/notes`);
+		const docs = await getDocs(collectionRef);
 
-        expect(dispatch).toHaveBeenCalledWith(savingNote())
-        expect(dispatch).toHaveBeenCalledWith(addNewEmtyNote({
-            "body": "",
-            "date": expect.any(Number),
-            "id": expect.any(String),
-            "imgsURL": [],
-            "title": "",
-        }))
-        expect(dispatch).toHaveBeenCalledWith(setActiveNote({
-            "body": "",
-            "date": expect.any(Number),
-            "id": expect.any(String),
-            "imgsURL": [],
-            "title": "",
-        }))
+		const deletePromises = [];
 
-        //Borrar de firebase
+		docs.forEach(doc => deletePromises.push(deleteDoc(doc.ref)));
 
-        const collectionRef = collection(FirebaseDB, `${uid}/journal/notes`)
-        const docs = await getDocs(collectionRef)
-
-        const deletePromises = []
-
-        docs.forEach( doc => deletePromises.push(deleteDoc(doc.ref)))
-
-        await Promise.all(deletePromises)
-    },15000)
-
-})
+		await Promise.all(deletePromises);
+	}, 15000);
+});

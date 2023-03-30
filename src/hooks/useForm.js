@@ -1,50 +1,49 @@
 import { useEffect, useMemo, useState } from 'react';
 
 export const useForm = (initialForm = {}, formValidations = {}) => {
+	const [formState, setFormState] = useState(initialForm);
 
-    const [formState, setFormState] = useState(initialForm);
+	const formValidation = useMemo(() => {
+		const formCheckedValues = {};
 
-    const formValidation = useMemo(() => {
+		for (const formField of Object.keys(formValidations)) {
+			const [fn, errorMessage] = formValidations[formField];
+			formCheckedValues[`${formField}Valid`] = fn(formState[formField])
+				? null
+				: errorMessage;
+		}
 
-        const formCheckedValues = {}
+		return formCheckedValues;
+	}, [formState]);
 
-        for (const formField of Object.keys(formValidations)) {
-            const [fn, errorMessage] = formValidations[formField]
-            formCheckedValues[`${formField}Valid`] = fn(formState[formField]) ? null : errorMessage
-        }
+	const isFormValid = useMemo(() => {
+		for (const formField of Object.keys(formValidation)) {
+			if (formValidation[formField] != null) return false;
+		}
 
-        return formCheckedValues
+		return true;
+	}, [formValidation]);
 
-    }, [formState])
+	useEffect(() => setFormState(initialForm), [initialForm]);
 
-    const isFormValid = useMemo(() => {
-        for (const formField of Object.keys(formValidation)) {
-            if (formValidation[formField] != null) return false
-        }
+	const onInputChange = ({ target }) => {
+		const { name, value } = target;
+		setFormState({
+			...formState,
+			[name]: value,
+		});
+	};
 
-        return true
-    }, [formValidation])
+	const onResetForm = () => {
+		setFormState(initialForm);
+	};
 
-    useEffect(() => setFormState(initialForm), [initialForm])
-
-    const onInputChange = ({ target }) => {
-        const { name, value } = target;
-        setFormState({
-            ...formState,
-            [name]: value
-        });
-    }
-
-    const onResetForm = () => {
-        setFormState(initialForm);
-    }
-
-    return {
-        ...formState,
-        ...formValidation,
-        formState,
-        isFormValid,
-        onInputChange,
-        onResetForm,
-    }
-}
+	return {
+		...formState,
+		...formValidation,
+		formState,
+		isFormValid,
+		onInputChange,
+		onResetForm,
+	};
+};
