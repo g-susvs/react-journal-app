@@ -2,9 +2,9 @@
 export const getEnvironments = () => {
 
   // cargar env
-  import.meta.env
+  const env = import.meta.env
 
   return {
-    ...import.meta.env
+    ...env
   }
 }
